@@ -25,15 +25,15 @@ public class UpdatedGroupProjectGUI extends Application {
     ResultSet dbResults;
     
    Employee Jacob = new Employee("jake","Hi1","jacob");
-   //Guest Susan = new Guest ("Susan1","Hi1","suzy");
-   //Guest Jay = new Guest ("Jason","Hi1","Jay");
+   Guest Susan = new Guest ("Susan1","Hi1","suzy");
+   Guest Jay = new Guest ("Jason","Hi1","Jay");
    
-   //Room one = new Room(3, 2, 1, 1, 1);
-   //Room two = new Room(2, 1, 2, 2, 2);
-   //Room three = new Room(1, 1, 2, 1, 3);
+   Room one = new Room(3, 2, 1, 1, 1);
+   Room two = new Room(2, 1, 2, 2, 2);
+   Room three = new Room(1, 1, 2, 1, 3);
    
-   //Booking first = new Booking(Susan, one, 2019, 5, 10);
-   //Booking second = new Booking(Jay, two, 2019, 8, 16);
+   Booking first = new Booking(Susan, one, 2019, 5, 10);
+   Booking second = new Booking(Jay, two, 2019, 8, 16);
 
 
 Alert a = new Alert(AlertType.ERROR);
@@ -346,8 +346,8 @@ Alert a = new Alert(AlertType.ERROR);
     public void start(Stage primaryStage) throws Exception {
         
         //loadDataFromDB();
-        showEmployee();
-        showGuest();
+     //   showEmployee();
+     //   showGuest();
         whole.getChildren().add(primaryPane);
         
         //Login page
@@ -823,7 +823,7 @@ Alert a = new Alert(AlertType.ERROR);
             String newPass = txtConfirmEdit.getText();
             if (password1.equals(newPass))
             {
-                Guest.guestAccounts.get(guestNum).setPassword(Guest.guestAccounts.get(guestNum).getPassword(), password1);
+                Guest.guestAccounts.get(guestNum).setPassword(password1);
             }
         });
         btnBackToChoice.setOnAction(e -> {
@@ -865,7 +865,7 @@ Alert a = new Alert(AlertType.ERROR);
             
             if(empPassword1.equals(empPassNew))
             {
-                Employee.employees.get(empNum).setPassword(Employee.employees.get(empNum).getPassword(), empPassword1);
+                Employee.employees.get(empNum).setPassword(empPassword1);
             }
         });
         
@@ -1098,201 +1098,206 @@ Alert a = new Alert(AlertType.ERROR);
 
     }
     
-    @Override
-    public void stop()
-    {
-        insertEmployee();
-        insertGuest();
-        insertRoom();
-    }
-    
-    public void insertEmployee(){
-        for (int i = 0; i < Employee.employees.size(); i++)
-        {
-            String sqlQuery = "";
-            sqlQuery += "INSERT INTO SYSTEM.EMPLOYEE (EMPLOYEEID, USERNAME, PASSWORD, EMPLOYEENAME) VALUES ";
-            sqlQuery += "(" + Employee.employees.get(i).getEmployeeID() + ", ";
-            sqlQuery += "\'" + Employee.employees.get(i).getUsername() + "\', ";
-            sqlQuery += "\'" + Employee.employees.get(i).getPassword() + "\', ";
-            sqlQuery += "\'" + Employee.employees.get(i).getEmployeeName() + "\')";
-            
-            sendDBCommand(sqlQuery);
-        }
-     
-    }
-    public void insertGuest(){
-        for (int i = 0; i < Guest.guestAccounts.size(); i++)
-        {
-            String sqlQuery = "";
-            sqlQuery += "INSERT INTO SYSTEM.GUEST (GUESTID, USERNAME, PASSWORD, GUESTNAME) VALUES ";
-            sqlQuery += "(" + Guest.guestAccounts.get(i).getGuestID() + ", ";
-            sqlQuery += "\'" + Guest.guestAccounts.get(i).getUserName() + "\', ";
-            sqlQuery += "\'" + Guest.guestAccounts.get(i).getPassword() + "\', ";
-            sqlQuery += "\'" + Guest.guestAccounts.get(i).getGuestName() +"\')";
-            
-            sendDBCommand(sqlQuery);
-
-        }
-    }
-    
-    public void insertRoom() {
-        for (int i = 0; i < Room.rooms.size(); i++)
-        {
-            String sqlQuery = "";
-            sqlQuery += "INSERT INTO SYSTEM.ROOM (ROOMID, BEDOPTION, KITCHENOPTION, COFFEEOPTION, ACCESSIBILITYOPTION, ROOMNUMBER, ISROOMBOOKED, ROOMCOSTPERNIGHT, ROOMREV) VALUES ";
-            sqlQuery += "(" + Room.rooms.get(i).getRoomID() + ", ";
-            sqlQuery += Room.rooms.get(i).bedOption + ", ";
-            sqlQuery += Room.rooms.get(i).kitchenOption + ", ";
-            sqlQuery += Room.rooms.get(i).coffeeOption + ", ";
-            sqlQuery += Room.rooms.get(i).accessibleOption +", ";
-            sqlQuery += Room.rooms.get(i).getRoomNumber() + ", ";
-            sqlQuery += "\'" + Room.rooms.get(i).isRoomBooked() + ", ";
-            sqlQuery += Room.rooms.get(i).roomCostPerNight + ", ";
-            sqlQuery += Room.rooms.get(i).getRoomRev() + ")";
-            
-            sendDBCommand(sqlQuery);
-        }
-    }
-    
-    public void insertRoomService(RoomService services){
-        String sqlQuery ="";
-        sqlQuery += "INSERT INTO SYSTEM.ROOMSERVICE (ROOMSERVICEID, ROOMSERVICEDESCRIPTION, PRICE) VALUES ";
-        sqlQuery += "(" + services.getRoomServiceID() + ", ";
-        sqlQuery += "\'" + services.getDescription() + "\', ";
-        sqlQuery += "\'" + services.getPrice() + "\')";
-        
-        sendDBCommand(sqlQuery);
-    }
-    
-    public void insertOrderItems()
-    {
-        for (int i = 0; i < Booking.booked.size(); i++)
-        {
-           String sqlQuery = "";
-           sqlQuery += Booking.booked.get(i).bookingID + ", ";
-
-        }
-    }
-    public void showEmployee()
-    {
-        String sqlQuery = "SELECT * FROM EMPLOYEE";
-        sendDBCommand(sqlQuery);
-        String username ="";
-        String password ="";
-        String name = "";
-        String ID ="";
-        try
-        {
-            while (dbResults.next())
-            {
-                ID += dbResults.getString(1);
-                name += dbResults.getString(2);
-                username += dbResults.getString(3);
-                password += dbResults.getString(4);
-                Employee emp = new Employee(username, password, name);
-            }
-            dbConn.close();
-        }
-        catch (SQLException e)
-        {
-            System.out.println(e.toString());
-        }
-        
-    }
-    
-    public void showGuest(){
-        String sqlQuery = "SELECT * FROM GUEST";
-        sendDBCommand(sqlQuery);
-        String gName = "";
-        String gUser ="";
-        String gPass = "";
-        String gID = "";
-        String value = "";
-        ValueGuest vGuest = null;
-        Guest newGuest = null;
-        
-        try
-        {
-            while(dbResults.next())
-            {
-                gID += dbResults.getString(1);
-                gName += dbResults.getString(2);
-                gUser += dbResults.getString(3);
-                gPass += dbResults.getString(4);
-                value += dbResults.getString(5);
-                
-                if(value.equals("Yes"))
-                {
-                    vGuest = new ValueGuest(gUser, gPass, gName);
-                }
-                else
-                {
-                  newGuest = new Guest(gUser, gPass, gName);
-                }
-            }
-            dbConn.close();
-        }
-        catch (SQLException e)
-        {
-            System.out.println(e.toString());
-        }
-        
-    }
-
-            
-
-    
     public static void main(String[] args) {
         launch(args);
-        
-    } 
-    public void sendDBCommand(String sqlQuery)
-    {
-        // Set up your connection strings
-        // IF YOU ARE IN CIS330 NOW: use YOUR Oracle Username/Password
-        String URL = "jdbc:oracle:thin:@localhost:1521:XE";
-        String userID = "system"; // Change to YOUR Oracle username
-        String userPASS = "heyyou90"; // Change to YOUR Oracle password
-        OracleDataSource ds;
-        
-        // Clear Box Testing - Print each query to check SQL syntax
-        //  sent to this method.
-        // You can comment this line out when your program is finished
-        System.out.println(sqlQuery);
-        
-        // Lets try to connect
-        try
-        {
-            // instantiate a new data source object
-            ds = new OracleDataSource();
-            // Where is the database located? Web? Local?
-            ds.setURL(URL);
-            // Send the user/pass and get an open connection.
-            dbConn = ds.getConnection(userID,userPASS);
-            // When we get results
-            //  -TYPE_SCROLL_SENSITIVE means if the database data changes we
-            //   will see our resultset update in real time.
-            //  -CONCUR_READ_ONLY means that we cannot accidentally change the
-            //   data in our database by using the .update____() methods of
-            //   the ResultSet class - TableView controls are impacted by
-            //   this setting as well.
-            commStmt = dbConn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            // We send the query to the DB. A ResultSet object is instantiated
-            //  and we are returned a reference to it, that we point to from
-            // dbResults.
-            // Because we declared dbResults at the datafield level
-            // we can see the results from anywhere in our Class.
-            dbResults = commStmt.executeQuery(sqlQuery); // Sends the Query to the DB
-            // The results are stored in a ResultSet structure object
-            // pointed to by the reference variable dbResults
-            // Because we declared this variable globally above, we can use
-            // the results in any method in the class.
-        }
-        catch (SQLException e)
-        {
-            System.out.println(e.toString());
-        }
     }
+    
+   // @Override
+//    public void stop()
+//    {
+//        insertEmployee();
+//        insertGuest();
+//        insertRoom();
+//    }
+//    
+//    public void insertEmployee(){
+//        for (int i = 0; i < Employee.employees.size(); i++)
+//        {
+//            String sqlQuery = "";
+//            sqlQuery += "INSERT INTO SYSTEM.EMPLOYEE (EMPLOYEEID, USERNAME, PASSWORD, EMPLOYEENAME) VALUES ";
+//            sqlQuery += "(" + Employee.employees.get(i).getEmployeeID() + ", ";
+//            sqlQuery += "\'" + Employee.employees.get(i).getUsername() + "\', ";
+//            sqlQuery += "\'" + Employee.employees.get(i).getPassword() + "\', ";
+//            sqlQuery += "\'" + Employee.employees.get(i).getEmployeeName() + "\')";
+//            
+//            sendDBCommand(sqlQuery);
+//        }
+//     
+//    }
+//    public void insertGuest(){
+//        for (int i = 0; i < Guest.guestAccounts.size(); i++)
+//        {
+//            String sqlQuery = "";
+//            sqlQuery += "INSERT INTO SYSTEM.GUEST (GUESTID, USERNAME, PASSWORD, GUESTNAME) VALUES ";
+//            sqlQuery += "(" + Guest.guestAccounts.get(i).getGuestID() + ", ";
+//            sqlQuery += "\'" + Guest.guestAccounts.get(i).getUserName() + "\', ";
+//            sqlQuery += "\'" + Guest.guestAccounts.get(i).getPassword() + "\', ";
+//            sqlQuery += "\'" + Guest.guestAccounts.get(i).getGuestName() +"\')";
+//            
+//            sendDBCommand(sqlQuery);
+//
+//        }
+//    }
+//    
+//    public void insertRoom() {
+//        for (int i = 0; i < Room.rooms.size(); i++)
+//        {
+//            String sqlQuery = "";
+//            sqlQuery += "INSERT INTO SYSTEM.ROOM (ROOMID, BEDOPTION, KITCHENOPTION, COFFEEOPTION, ACCESSIBILITYOPTION, ROOMNUMBER, ISROOMBOOKED, ROOMCOSTPERNIGHT, ROOMREV) VALUES ";
+//            sqlQuery += "(" + Room.rooms.get(i).getRoomID() + ", ";
+//            sqlQuery += Room.rooms.get(i).bedOption + ", ";
+//            sqlQuery += Room.rooms.get(i).kitchenOption + ", ";
+//            sqlQuery += Room.rooms.get(i).coffeeOption + ", ";
+//            sqlQuery += Room.rooms.get(i).accessibleOption +", ";
+//            sqlQuery += Room.rooms.get(i).getRoomNumber() + ", ";
+//            sqlQuery += "\'" + Room.rooms.get(i).isBooked() + ", ";
+//            sqlQuery += Room.rooms.get(i).roomCostPerNight + ", ";
+//// this doesnt exist yet?            
+////sqlQuery += Room.rooms.get(i).getRoomRev() + ")";
+//            
+//            sendDBCommand(sqlQuery);
+//        }
+//    }
+//    
+//    public void insertRoomService(RoomService services){
+//        String sqlQuery ="";
+//        sqlQuery += "INSERT INTO SYSTEM.ROOMSERVICE (ROOMSERVICEID, ROOMSERVICEDESCRIPTION, PRICE) VALUES ";
+//        sqlQuery += "(" + services.getRoomServiceID() + ", ";
+//        sqlQuery += "\'" + services.getDescription() + "\', ";
+//        sqlQuery += "\'" + services.getPrice() + "\')";
+//        
+//        sendDBCommand(sqlQuery);
+//    }
+//    
+//    public void insertOrderItems()
+//    {
+//        for (int i = 0; i < Booking.booked.size(); i++)
+//        {
+//           String sqlQuery = "";
+//           sqlQuery += Booking.booked.get(i).getBookingID() + ", ";
+//
+//        }
+//    }
+//    public void showEmployee()
+//    {
+//        String sqlQuery = "SELECT * FROM EMPLOYEE";
+//        sendDBCommand(sqlQuery);
+//        String username ="";
+//        String password ="";
+//        String name = "";
+//        String ID ="";
+//        try
+//        {
+//            while (dbResults.next())
+//            {
+//                ID += dbResults.getString(1);
+//                name += dbResults.getString(2);
+//                username += dbResults.getString(3);
+//                password += dbResults.getString(4);
+//                Employee emp = new Employee(username, password, name);
+//            }
+//            dbConn.close();
+//        }
+//        catch (SQLException e)
+//        {
+//            System.out.println(e.toString());
+//        }
+//        
+//    }
+//    
+//    public void showGuest(){
+//        String sqlQuery = "SELECT * FROM GUEST";
+//        sendDBCommand(sqlQuery);
+//        String gName = "";
+//        String gUser ="";
+//        String gPass = "";
+//        String gID = "";
+//        String value = "";
+//        ValueGuest vGuest = null;
+//        Guest newGuest = null;
+//        
+//        try
+//        {
+//            while(dbResults.next())
+//            {
+//                gID += dbResults.getString(1);
+//                gName += dbResults.getString(2);
+//                gUser += dbResults.getString(3);
+//                gPass += dbResults.getString(4);
+//                value += dbResults.getString(5);
+//                
+//                if(value.equals("Yes"))
+//                {
+//                    vGuest = new ValueGuest(gUser, gPass, gName);
+//                }
+//                else
+//                {
+//                  newGuest = new Guest(gUser, gPass, gName);
+//                }
+//            }
+//            dbConn.close();
+//        }
+//        catch (SQLException e)
+//        {
+//            System.out.println(e.toString());
+//        }
+//        
+//    }
+//
+//            
+//
+//    
+//    public static void main(String[] args) {
+//        launch(args);
+//        
+//    } 
+//    public void sendDBCommand(String sqlQuery)
+//    {
+//        // Set up your connection strings
+//        // IF YOU ARE IN CIS330 NOW: use YOUR Oracle Username/Password
+//        String URL = "jdbc:oracle:thin:@localhost:1521:XE";
+//        String userID = "system"; // Change to YOUR Oracle username
+//        String userPASS = "heyyou90"; // Change to YOUR Oracle password
+//        OracleDataSource ds;
+//        
+//        // Clear Box Testing - Print each query to check SQL syntax
+//        //  sent to this method.
+//        // You can comment this line out when your program is finished
+//        System.out.println(sqlQuery);
+//        
+//        // Lets try to connect
+//        try
+//        {
+//            // instantiate a new data source object
+//            ds = new OracleDataSource();
+//            // Where is the database located? Web? Local?
+//            ds.setURL(URL);
+//            // Send the user/pass and get an open connection.
+//            dbConn = ds.getConnection(userID,userPASS);
+//            // When we get results
+//            //  -TYPE_SCROLL_SENSITIVE means if the database data changes we
+//            //   will see our resultset update in real time.
+//            //  -CONCUR_READ_ONLY means that we cannot accidentally change the
+//            //   data in our database by using the .update____() methods of
+//            //   the ResultSet class - TableView controls are impacted by
+//            //   this setting as well.
+//            commStmt = dbConn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//            // We send the query to the DB. A ResultSet object is instantiated
+//            //  and we are returned a reference to it, that we point to from
+//            // dbResults.
+//            // Because we declared dbResults at the datafield level
+//            // we can see the results from anywhere in our Class.
+//            dbResults = commStmt.executeQuery(sqlQuery); // Sends the Query to the DB
+//            // The results are stored in a ResultSet structure object
+//            // pointed to by the reference variable dbResults
+//            // Because we declared this variable globally above, we can use
+//            // the results in any method in the class.
+//        }
+//        catch (SQLException e)
+//        {
+//            System.out.println(e.toString());
+//        }
+    //}
 
 
     

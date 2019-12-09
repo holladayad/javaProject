@@ -20,7 +20,7 @@ public class RoomService {
     public static ArrayList<RoomService> service = new ArrayList();
     
     
-    public RoomService (int roomServiceID, String description, double price)
+    public RoomService (String description, double price)
     {
         this.description = description;
         this.price = price;
@@ -28,6 +28,20 @@ public class RoomService {
         this.roomServiceID = nextID++;
         
     }
+    
+    public int getRoomServiceID()
+   {
+       return this.roomServiceID;
+   }
+    
+    public double getPrice()
+   {
+       return this.price;
+   }
+    public String getDescription()
+   {
+       return this.description;
+   }
     
     public double calculateRoomServiceTotal()
     {

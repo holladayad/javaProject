@@ -14,6 +14,7 @@ public class Booking {
 	public static ArrayList<Booking> booked = new ArrayList();
     public Room bookedRoom;
     public Guest bookingGuest;
+    private int bookingID;
     public int bookingYear;
     public int checkInDay;
     public int checkOutDay;
@@ -27,9 +28,10 @@ public class Booking {
             this.bookingYear = year;
             this.checkInDay = checkIn;
             this.checkOutDay = checkOut;
-            this.nextID++;
+            
             this.bookedRoom.bookRoom();
             booked.add(this);
+            bookingID = this.nextID++;
         }
     
     public int calculateDaysStayed()
@@ -41,6 +43,11 @@ public class Booking {
             }
             return daysStayed;
         }
+    
+    public int getBookingID()
+   {
+       return this.bookingID;
+   }
     
     public void endBooking()
     {

@@ -45,6 +45,11 @@ public static ArrayList<Guest> guestAccounts = new ArrayList();
        return this.guestName;
    }
    
+   public int getGuestID()
+   {
+       return this.guestID;
+   }
+   
    // Getter for UserName
    public String getUserName()
    {

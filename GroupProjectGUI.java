@@ -778,7 +778,7 @@ public class GroupProjectGUI extends Application {
             String newPass = txtConfirmEdit.getText();
             if (password1.equals(newPass))
             {
-                Guest.guestAccounts.get(guestNum).setPassword(Guest.guestAccounts.get(guestNum).getPassword(), password1);
+                Guest.guestAccounts.get(guestNum).setPassword(password1);
             }
         });
         btnBackToChoice.setOnAction(e -> {
@@ -820,7 +820,7 @@ public class GroupProjectGUI extends Application {
             
             if(empPassword1.equals(empPassNew))
             {
-                Employee.employees.get(empNum).setPassword(Employee.employees.get(empNum).getPassword(), empPassword1);
+                Employee.employees.get(empNum).setPassword(empPassword1);
             }
         });
         

@@ -53,6 +53,12 @@ public class Employee {
    {
        return (this.employeeName = employeeName);
    }
+   
+   public int getEmployeeID()
+   {
+       return this.employeeID;
+   }
+   
    public String getPassword()
    {
        return this.password;
