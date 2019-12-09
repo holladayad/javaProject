@@ -84,14 +84,7 @@ public class Employee {
        // new password must be different than the old password
        int check = 0;
        
-//       do {
-//       
-//           if (check != 0){
-//               switch (check){
-//                   case 1: System.out.println("You've already used that password.");
-//                   case 2: System.out.println("");
-//               }
-//           }
+
        if (newPass.equals(oldPass))
        {
            check = 1;
