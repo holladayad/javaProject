@@ -323,7 +323,7 @@ Alert a = new Alert(AlertType.ERROR);
     
     
     
-    String tableE = "EMPLOYEE";
+  
     
     
     
@@ -332,8 +332,8 @@ Alert a = new Alert(AlertType.ERROR);
     public void start(Stage primaryStage) throws Exception {
         
         //loadDataFromDB();
-        showEmployee();
-        showGuest();
+        showAllEmployee();
+        showAllGuest();
         whole.getChildren().add(primaryPane);
         
         //Login page
@@ -1121,7 +1121,7 @@ Alert a = new Alert(AlertType.ERROR);
 
         }
     }
-    public void showEmployee()
+    public void showAllEmployee()
     {
         String sqlQuery = "SELECT * FROM EMPLOYEE";
         sendDBCommand(sqlQuery);
@@ -1148,7 +1148,7 @@ Alert a = new Alert(AlertType.ERROR);
         
     }
     
-    public void showGuest(){
+    public void showAllGuest(){
         String sqlQuery = "SELECT * FROM GUEST";
         sendDBCommand(sqlQuery);
         String gName = "";
