@@ -16,6 +16,7 @@ public class Employee {
    private String username;
    private String password;
    private String employeeName;
+   private int error;
    
    public static int nextID = 0;
    
@@ -28,14 +29,16 @@ public class Employee {
        this.username = username;
        this.employeeID = nextID++;
        employees.add(this);
-       setPassword(null, password);
+       this.password = null;
+       this.error = setPassword(password);
    }
    
    public boolean checkCredentials(String username, String password)
    {
        boolean correct = true;
-       
-       if (this.username.equalsIgnoreCase(username) && this.password.equalsIgnoreCase(password))
+       // change the order of passwords in the if statement to make 
+       // sure it doesn't crash if the password is null
+       if (this.username.equalsIgnoreCase(username) && password.equals(this.password))
        {
            return correct;
        }
@@ -65,14 +68,30 @@ public class Employee {
        this.employeeName = employeeName;
    }
    
-   public int setPassword(String oldPass, String newPass)
+   
+   public int getError()
    {
+       return (this.error = error);
+   }
+   
+   public int setPassword(String newPass)
+   {
+       String oldPass = this.password;
        boolean atLeastOneUpper = false;
        boolean atLeastOneLower = false;
        boolean atLeastOneNumber = false;
        
        // new password must be different than the old password
        int check = 0;
+       
+//       do {
+//       
+//           if (check != 0){
+//               switch (check){
+//                   case 1: System.out.println("You've already used that password.");
+//                   case 2: System.out.println("");
+//               }
+//           }
        if (newPass.equals(oldPass))
        {
            check = 1;
@@ -126,11 +145,14 @@ public class Employee {
             }
        }
        
-      
+//       }
+//       while(check != 6);
        
-           
+       //this.error = check;    
        return check;
-   }
+   
+       }
+   
           
                
            

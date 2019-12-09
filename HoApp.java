@@ -5,11 +5,11 @@ import java.util.*;
 public class HoApp {
 	public static void main(String[] args) {
 
-		Employee jacob = new Employee("bell2jh", "godukes", "jacob");
-		Employee sarah = new Employee("smith", "hi", "sarah");
+		Employee jacob = new Employee("bell2jh", "Godukes1", "jacob");
+		Employee sarah = new Employee("smith", "Hi1", "sarah");
 
-		Guest susan = new Guest("susan1", "hi", "susan");
-		Guest jay = new Guest("jay1", "hi", "jay");
+		Guest susan = new Guest("susan1", "Hi1", "susan");
+		Guest jay = new Guest("jay1", "Hi1", "jay");
 
 		Room one = new Room(3, 2, 1, 1, 1);
 		Room two = new Room(2, 1, 2, 2, 2);
@@ -216,7 +216,7 @@ public class HoApp {
                         String passwordNew2 = in.next();
                         if (passwordNew.equals(passwordNew2))
                         {
-                            Guest.guestAccounts.get(guestNum).setPassword(Guest.guestAccounts.get(guestNum).getPassword(), passwordNew);
+                            Guest.guestAccounts.get(guestNum).setPassword(passwordNew);
                             System.out.println("Password change successful");
                         }
                         break;
@@ -245,7 +245,7 @@ public class HoApp {
                         String password2 = in.next();
                         if (password.equals(password2))
                         {
-                            Employee.employees.get(employeeNum).setPassword(Employee.employees.get(employeeNum).getPassword(), password);
+                            Employee.employees.get(employeeNum).setPassword(password);
                             System.out.println("Password change successful");
                         }
    

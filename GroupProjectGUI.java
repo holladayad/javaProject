@@ -722,7 +722,8 @@ public class GroupProjectGUI extends Application {
             {
                 Guest regGuest = new Guest(guestUser, guestPass, guestName);
             }
-            
+            // need to check regGuest.getError if return != 6 password was not set 
+            // because it does not meet the requirements
         });
         
         
@@ -749,7 +750,7 @@ public class GroupProjectGUI extends Application {
             String newPass = txtConfirmEdit.getText();
             if (password1.equals(newPass))
             {
-                Guest.guestAccounts.get(guestNum).setPassword(Guest.guestAccounts.get(guestNum).getPassword(), password1);
+                Guest.guestAccounts.get(guestNum).setPassword(password1);
             }
         });
         btnBackToChoice.setOnAction(e -> {
@@ -766,7 +767,8 @@ public class GroupProjectGUI extends Application {
            
            Employee newEmp = new Employee(userEmp,passEmp,nameEmp);
            TAEmp.appendText(nameEmp + " was successfully created!");
-           
+           // needs to check if newEmp.getError is != 6
+           // if so password was no set because it does not meet the requirements
         });
         
         //Employee tab 6 functionality
@@ -791,7 +793,7 @@ public class GroupProjectGUI extends Application {
             
             if(empPassword1.equals(empPassNew))
             {
-                Employee.employees.get(empNum).setPassword(Employee.employees.get(empNum).getPassword(), empPassword1);
+                Employee.employees.get(empNum).setPassword(empPassword1);
             }
         });
         
