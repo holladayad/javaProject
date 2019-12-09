@@ -1,31 +1,42 @@
 
 package javaProject;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.event.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.scene.text.*; 
+import javafx.scene.text.*;
+import java.sql.*;
+import java.util.*;
+import oracle.jdbc.pool.*;
+
 
 
 
 public class GroupProjectGUI extends Application {
+    Connection dbConn;
+    Statement commStmt;
+    ResultSet dbResults;
+    
    Employee Jacob = new Employee("jake","Hi1","jacob");
-   Guest Susan = new Guest ("Susan1","Hi1","suzy");
-   Guest Jay = new Guest ("Jason","Hi1","Jay");
+   //Guest Susan = new Guest ("Susan1","Hi1","suzy");
+   //Guest Jay = new Guest ("Jason","Hi1","Jay");
    
-   Room one = new Room(3, 2, 1, 1, 1);
-   Room two = new Room(2, 1, 2, 2, 2);
-   Room three = new Room(1, 1, 2, 1, 3);
+   //Room one = new Room(3, 2, 1, 1, 1);
+   //Room two = new Room(2, 1, 2, 2, 2);
+   //Room three = new Room(1, 1, 2, 1, 3);
    
-   Booking first = new Booking(Susan, one, 2019, 5, 10);
-   Booking second = new Booking(Jay, two, 2019, 8, 16);
+   //Booking first = new Booking(Susan, one, 2019, 5, 10);
+   //Booking second = new Booking(Jay, two, 2019, 8, 16);
 
 
-
+Alert a = new Alert(AlertType.ERROR);
 
 
 
@@ -210,11 +221,11 @@ public class GroupProjectGUI extends Application {
         
         // controls tab 3 subPane
         
-        Label newPasswordGuest = new Label("Please enter your new password");
-        Label confirmNewGuestPass = new Label("Confirm password");
+        Label newPasswordGuest = new Label("Please enter your new name");
+        Label confirmNewGuestPass = new Label("Confirm name");
         TextField txtNewPasswordGuest = new TextField();
         TextField txtConfirmNewGuestPass = new TextField();
-        Button changeGuestPass = new Button("Change Password");
+        Button changeGuestPass = new Button("Change Name");
         Button backToGuestMenu = new Button("Back to Guest Menu");
         TextArea TAEditPass = new TextArea();
         
@@ -312,7 +323,7 @@ public class GroupProjectGUI extends Application {
     
     
     
-    
+    String tableE = "EMPLOYEE";
     
     
     
@@ -320,6 +331,9 @@ public class GroupProjectGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         
+        //loadDataFromDB();
+        showEmployee();
+        showGuest();
         whole.getChildren().add(primaryPane);
         
         //Login page
@@ -589,7 +603,7 @@ public class GroupProjectGUI extends Application {
        editPersonal.add(edit,0,0);
        editPersonal.add(choice2,2,0);
        editPersonal.add(continue3,1,2);
-       choice2.getItems().addAll("Edit My Password");
+       choice2.getItems().addAll("Edit My Name");
        
        // tab 3 subpane edits
        
@@ -615,30 +629,61 @@ public class GroupProjectGUI extends Application {
         primaryStage.setScene(empLoginScene);
         primaryStage.setTitle("Hotel Madison App");
         
-        
+        Alert errorAlert = new Alert(AlertType.ERROR);
+
         btnLogin.setOnAction(e -> {
             if (comboUser.getValue() == "Employee")
             {
-//                Employee foundEmployee = null;
-//                for (int i = 0; i < Employee.employees.size(); i++)
-//                {
-//                    
-//                    Employee current = Employee.employees.get(i);
-//                    boolean isPerson = current.checkCredentials(name, password);
-//
-//                    if (isPerson) {
-//                        foundEmployee = current;
+                Employee foundEmployee = null;
+                for (int i = 0; i < Employee.employees.size(); i++)
+                {
+                    
+                    Employee current = Employee.employees.get(i);
+                    boolean isPerson = current.checkCredentials(txtFirst.getText(), txtSecond.getText());
+
+                    if (isPerson) {
+                        foundEmployee = current;
                         
                         
                        primaryStage.setScene(empMenuChoiceScene);
 
-//                        break;
-//                    }
+                        break;
+                    }
+                    else
+                    {
+                         a.setTitle("Invalid Login");
+                         a.setHeaderText("Login information is incorrect");
+                         a.setContentText("Either you username or password is incorrect, please try again");
+                         a.show();
+                    }
 
-//                }
+                }
             }
-            else
-                primaryStage.setScene(bookRoom);
+            else if (comboUser.getValue() == "Guest")
+                {
+                    Guest foundGuest = null;
+                    for (int i = 0; i < Guest.guestAccounts.size(); i++)
+                    {
+                        Guest current = Guest.guestAccounts.get(i);
+                        boolean isPerson = current.checkCredentials(txtFirst.getText(), txtSecond.getText());
+                        
+                        if (isPerson)
+                        {
+                            foundGuest = current;
+                            primaryStage.setScene(bookRoom);
+                            break;
+
+                        }
+                        else
+                        {
+                             a.setTitle("Invalid Login");
+                             a.setHeaderText("Login information is incorrect");
+                             a.setContentText("Either you username or password is incorrect, please try again");
+                             a.show();
+                        }
+                    }
+                }
+            
         });
      //!!!!! Employee Tab 1 Functionality   
        rb2.setOnAction(e -> {
@@ -655,7 +700,7 @@ public class GroupProjectGUI extends Application {
                 }
                         
             }
-            else 
+            else if(rb2.isSelected() == true)
             {
                Room roomFound = null;
                for (int i = 0; i < Room.rooms.size(); i++)
@@ -667,10 +712,12 @@ public class GroupProjectGUI extends Application {
                        roomFound = current;
                        report.appendText(current.roomAnalytics().toString());
                    }
+                  
                }
     
                singleRoom.clear();
             }
+         
  
          
            
@@ -722,8 +769,7 @@ public class GroupProjectGUI extends Application {
             {
                 Guest regGuest = new Guest(guestUser, guestPass, guestName);
             }
-            // need to check regGuest.getError if return != 6 password was not set 
-            // because it does not meet the requirements
+            
         });
         
         
@@ -750,7 +796,7 @@ public class GroupProjectGUI extends Application {
             String newPass = txtConfirmEdit.getText();
             if (password1.equals(newPass))
             {
-                Guest.guestAccounts.get(guestNum).setPassword(password1);
+                Guest.guestAccounts.get(guestNum).setPassword(Guest.guestAccounts.get(guestNum).getPassword(), password1);
             }
         });
         btnBackToChoice.setOnAction(e -> {
@@ -767,8 +813,7 @@ public class GroupProjectGUI extends Application {
            
            Employee newEmp = new Employee(userEmp,passEmp,nameEmp);
            TAEmp.appendText(nameEmp + " was successfully created!");
-           // needs to check if newEmp.getError is != 6
-           // if so password was no set because it does not meet the requirements
+           
         });
         
         //Employee tab 6 functionality
@@ -793,7 +838,7 @@ public class GroupProjectGUI extends Application {
             
             if(empPassword1.equals(empPassNew))
             {
-                Employee.employees.get(empNum).setPassword(empPassword1);
+                Employee.employees.get(empNum).setPassword(Employee.employees.get(empNum).getPassword(), empPassword1);
             }
         });
         
@@ -830,6 +875,8 @@ public class GroupProjectGUI extends Application {
         // employee tab 8
         empLogOut.setOnAction(e -> {
             primaryStage.setScene(empLoginScene);
+            txtFirst.clear();
+            txtSecond.clear();
         });
         
         creatingRoom.setOnAction(e -> {
@@ -860,7 +907,16 @@ public class GroupProjectGUI extends Application {
                     not_Found = false;
                     current.makeActive();
                 }
-                // if not found make a error message!!@!$!@#$!@#$!@#$
+//                else
+//                {
+//                    
+//                    
+//                         a.setTitle("Invalid Room");
+//                         a.setHeaderText("Room not found");
+//                         a.setContentText("The room you're trying to find has not yet been created please enter a room that has been created");
+//                         a.show();
+//                    
+//                }
             }
         });
          
@@ -875,7 +931,16 @@ public class GroupProjectGUI extends Application {
                      notFound = false;
                      current.makeInactive();
                  }
-                 // if not found make an error message!!!!!!!!!!!!!
+//                 else
+//                 {
+//                     if (notFound = true)
+//                     {
+//                         a.setTitle("Invalid Room");
+//                         a.setHeaderText("Room not found");
+//                         a.setContentText("The room you're trying to find has not yet been created please enter a room that has been created");
+//                         a.show();
+//                     }
+//                 }
              }
          });
          
@@ -890,9 +955,9 @@ public class GroupProjectGUI extends Application {
         // Guest tab 1 edits
 
         showAvail.setOnAction(e -> {
-            
-        
         boolean didNotFindRoom = true;
+
+        
         for (int i = 0; i < Room.rooms.size(); i++)
         {
             if (!Room.rooms.get(i).isBooked() && Room.rooms.get(i).isActive())
@@ -900,6 +965,7 @@ public class GroupProjectGUI extends Application {
                 bookingTA.appendText(Room.rooms.get(i).roomDescription());
                 didNotFindRoom = false;
             }
+
         }
         });
         
@@ -932,16 +998,17 @@ public class GroupProjectGUI extends Application {
         
        });
                 
-        boolean noRoomsBooked = true;
          showMy.setOnAction(e -> {
+        boolean noRoomsBooked = true;
 
         for (int i = 0; i < Booking.booked.size(); i++)
         {
-            if(Booking.booked.get(i).bookingGuest.getUserName().equalsIgnoreCase(guestUser.getText()))
+            if(Booking.booked.get(i).bookingGuest.getUserName().equalsIgnoreCase(txtFirst.getText()))
             {
                 iBook.appendText(Booking.booked.get(i).bookedRoom.roomAnalytics()+"\n");
                  
             }
+
         }
         });
          
@@ -951,7 +1018,18 @@ public class GroupProjectGUI extends Application {
          });
          
          changeGuestPass.setOnAction(e -> {
-             
+             String newName = txtNewPasswordGuest.toString();
+             String confirmName = txtConfirmNewGuestPass.toString();
+             Guest newGuest = null;
+             for (int i = 0; i < Guest.guestAccounts.size(); i++)
+                 {
+                     if (guestUser.equals(Guest.guestAccounts.get(i).getUserName()))
+                         newGuest = Guest.guestAccounts.get(i);
+                 }
+             if (newGuest != null)
+                 {
+                     newGuest.setGuestName(newName);
+                 }
          });
          
          backToGuestMenu.setOnAction(e -> {
@@ -968,12 +1046,203 @@ public class GroupProjectGUI extends Application {
 
     }
     
+    @Override
+    public void stop()
+    {
+        insertEmployee();
+        insertGuest();
+        insertRoom();
+    }
     
+    public void insertEmployee(){
+        for (int i = 0; i < Employee.employees.size(); i++)
+        {
+            String sqlQuery = "";
+            sqlQuery += "INSERT INTO SYSTEM.EMPLOYEE (EMPLOYEEID, USERNAME, PASSWORD, EMPLOYEENAME) VALUES ";
+            sqlQuery += "(" + Employee.employees.get(i).getEmployeeID() + ", ";
+            sqlQuery += "\'" + Employee.employees.get(i).getUsername() + "\', ";
+            sqlQuery += "\'" + Employee.employees.get(i).getPassword() + "\', ";
+            sqlQuery += "\'" + Employee.employees.get(i).getEmployeeName() + "\')";
+            
+            sendDBCommand(sqlQuery);
+        }
+     
+    }
+    public void insertGuest(){
+        for (int i = 0; i < Guest.guestAccounts.size(); i++)
+        {
+            String sqlQuery = "";
+            sqlQuery += "INSERT INTO SYSTEM.GUEST (GUESTID, USERNAME, PASSWORD, GUESTNAME) VALUES ";
+            sqlQuery += "(" + Guest.guestAccounts.get(i).getGuestID() + ", ";
+            sqlQuery += "\'" + Guest.guestAccounts.get(i).getUserName() + "\', ";
+            sqlQuery += "\'" + Guest.guestAccounts.get(i).getPassword() + "\', ";
+            sqlQuery += "\'" + Guest.guestAccounts.get(i).getGuestName() +"\')";
+            
+            sendDBCommand(sqlQuery);
+
+        }
+    }
+    
+    public void insertRoom() {
+        for (int i = 0; i < Room.rooms.size(); i++)
+        {
+            String sqlQuery = "";
+            sqlQuery += "INSERT INTO SYSTEM.ROOM (ROOMID, BEDOPTION, KITCHENOPTION, COFFEEOPTION, ACCESSIBILITYOPTION, ROOMNUMBER, ISROOMBOOKED, ROOMCOSTPERNIGHT, ROOMREV) VALUES ";
+            sqlQuery += "(" + Room.rooms.get(i).getRoomID() + ", ";
+            sqlQuery += Room.rooms.get(i).bedOption + ", ";
+            sqlQuery += Room.rooms.get(i).kitchenOption + ", ";
+            sqlQuery += Room.rooms.get(i).coffeeOption + ", ";
+            sqlQuery += Room.rooms.get(i).accessibleOption +", ";
+            sqlQuery += Room.rooms.get(i).getRoomNumber() + ", ";
+            sqlQuery += "\'" + Room.rooms.get(i).isRoomBooked() + ", ";
+            sqlQuery += Room.rooms.get(i).roomCostPerNight + ", ";
+            sqlQuery += Room.rooms.get(i).getRoomRev() + ")";
+            
+            sendDBCommand(sqlQuery);
+        }
+    }
+    
+    public void insertRoomService(RoomService services){
+        String sqlQuery ="";
+        sqlQuery += "INSERT INTO SYSTEM.ROOMSERVICE (ROOMSERVICEID, ROOMSERVICEDESCRIPTION, PRICE) VALUES ";
+        sqlQuery += "(" + services.getRoomServiceID() + ", ";
+        sqlQuery += "\'" + services.getDescription() + "\', ";
+        sqlQuery += "\'" + services.getPrice() + "\')";
+        
+        sendDBCommand(sqlQuery);
+    }
+    
+    public void insertOrderItems()
+    {
+        for (int i = 0; i < Booking.booked.size(); i++)
+        {
+           String sqlQuery = "";
+           sqlQuery += Booking.booked.get(i).bookingID + ", ";
+
+        }
+    }
+    public void showEmployee()
+    {
+        String sqlQuery = "SELECT * FROM EMPLOYEE";
+        sendDBCommand(sqlQuery);
+        String username ="";
+        String password ="";
+        String name = "";
+        String ID ="";
+        try
+        {
+            while (dbResults.next())
+            {
+                ID += dbResults.getString(1);
+                name += dbResults.getString(2);
+                username += dbResults.getString(3);
+                password += dbResults.getString(4);
+                Employee emp = new Employee(username, password, name);
+            }
+            dbConn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println(e.toString());
+        }
+        
+    }
+    
+    public void showGuest(){
+        String sqlQuery = "SELECT * FROM GUEST";
+        sendDBCommand(sqlQuery);
+        String gName = "";
+        String gUser ="";
+        String gPass = "";
+        String gID = "";
+        String value = "";
+        ValueGuest vGuest = null;
+        Guest newGuest = null;
+        
+        try
+        {
+            while(dbResults.next())
+            {
+                gID += dbResults.getString(1);
+                gName += dbResults.getString(2);
+                gUser += dbResults.getString(3);
+                gPass += dbResults.getString(4);
+                value += dbResults.getString(5);
+                
+                if(value.equals("Yes"))
+                {
+                    vGuest = new ValueGuest(gUser, gPass, gName);
+                }
+                else
+                {
+                  newGuest = new Guest(gUser, gPass, gName);
+                }
+            }
+            dbConn.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.println(e.toString());
+        }
+        
+    }
+
+            
 
     
     public static void main(String[] args) {
         launch(args);
+        
+    } 
+    public void sendDBCommand(String sqlQuery)
+    {
+        // Set up your connection strings
+        // IF YOU ARE IN CIS330 NOW: use YOUR Oracle Username/Password
+        String URL = "jdbc:oracle:thin:@localhost:1521:XE";
+        String userID = "system"; // Change to YOUR Oracle username
+        String userPASS = "heyyou90"; // Change to YOUR Oracle password
+        OracleDataSource ds;
+        
+        // Clear Box Testing - Print each query to check SQL syntax
+        //  sent to this method.
+        // You can comment this line out when your program is finished
+        System.out.println(sqlQuery);
+        
+        // Lets try to connect
+        try
+        {
+            // instantiate a new data source object
+            ds = new OracleDataSource();
+            // Where is the database located? Web? Local?
+            ds.setURL(URL);
+            // Send the user/pass and get an open connection.
+            dbConn = ds.getConnection(userID,userPASS);
+            // When we get results
+            //  -TYPE_SCROLL_SENSITIVE means if the database data changes we
+            //   will see our resultset update in real time.
+            //  -CONCUR_READ_ONLY means that we cannot accidentally change the
+            //   data in our database by using the .update____() methods of
+            //   the ResultSet class - TableView controls are impacted by
+            //   this setting as well.
+            commStmt = dbConn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            // We send the query to the DB. A ResultSet object is instantiated
+            //  and we are returned a reference to it, that we point to from
+            // dbResults.
+            // Because we declared dbResults at the datafield level
+            // we can see the results from anywhere in our Class.
+            dbResults = commStmt.executeQuery(sqlQuery); // Sends the Query to the DB
+            // The results are stored in a ResultSet structure object
+            // pointed to by the reference variable dbResults
+            // Because we declared this variable globally above, we can use
+            // the results in any method in the class.
+        }
+        catch (SQLException e)
+        {
+            System.out.println(e.toString());
+        }
     }
+
+
     
     
     
