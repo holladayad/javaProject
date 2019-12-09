@@ -29,4 +29,17 @@ public class RoomService {
         
     }
     
+    public double calculateRoomServiceTotal()
+    {
+        
+       double subTotal =0;
+       for (int i = 0; i < RoomService.service.size(); i++)
+            {
+                
+                subTotal += RoomService.service.get(i).price;
+                               
+            }
+       return subTotal;
+    }
+    
 }
