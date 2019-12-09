@@ -229,7 +229,19 @@ Alert a = new Alert(AlertType.ERROR);
         Button backToGuestMenu = new Button("Back to Guest Menu");
         TextArea TAEditPass = new TextArea();
         
-        // guest taba 4
+    
+        //guest tab 4
+        
+        //Label roomServiceItem = new Label("Enter Item");
+        //Label servicePrice = new Label("Enter Item Price");
+        ComboBox <String> comboRoomServiceItem = new ComboBox();
+        TextField txtRoomServiceItem = new TextField();
+        TextField txtServiceItem = new TextField();
+        Button addServiceItem = new Button ("Add to Bill");
+        
+        TextArea txtItemsAdded = new TextArea();
+        
+        // guest tabb 5
         Label question = new Label("Would you like to log out?");
         Button yes = new Button ("Log Out");
         
@@ -258,6 +270,7 @@ Alert a = new Alert(AlertType.ERROR);
         GridPane editPersonal = new GridPane();
         GridPane personalPass = new GridPane();
         GridPane logOut = new GridPane();
+        GridPane roomService = new GridPane();
         
         // Employee Menu Panes
         
@@ -296,7 +309,8 @@ Alert a = new Alert(AlertType.ERROR);
         Tab guestTab1 = new Tab("Book a Room");
         Tab guestTab2 = new Tab ("See Which Rooms you have booked");
         Tab guestTab3 = new Tab ("Edit Personal Information");
-        Tab guestTab4 = new Tab("Log Out");
+        Tab guestTab4 = new Tab("Room Service");
+        Tab guestTab5 = new Tab("Log Out");
         
         
         
@@ -618,8 +632,21 @@ Alert a = new Alert(AlertType.ERROR);
        TAEditPass.setEditable(false);
        TAEditPass.setMaxSize(400,250 );
        
+        // tab 4 subpane edits 
+       comboRoomServiceItem.getItems().addAll("Pizza $10"
+       , "Pasta $8" , "Bread Sticks $4" );
+       comboRoomServiceItem.setValue("Room Service Items");
+       guestTab4.setContent(roomService);
+       roomService.setAlignment(Pos.CENTER);
+       roomService.add(comboRoomServiceItem, 0, 0);
+       roomService.add(addServiceItem, 0, 1);
+       roomService.add(txtItemsAdded,0,5);
+       roomService.setVgap(15);
+       roomService.setHgap(15);
+       //txtItemsAdded.setPrefSize(5, 5);
        
-       guestTab4.setContent(logOut);
+       //tab 5 subpane edits 
+       guestTab5.setContent(logOut);
        logOut.setAlignment(Pos.CENTER);
        logOut.add(question, 0, 0);
        logOut.add(yes,1,3);
@@ -1040,6 +1067,31 @@ Alert a = new Alert(AlertType.ERROR);
          yes.setOnAction(e -> {
              primaryStage.setScene(empLoginScene);
                  });
+        
+        addServiceItem.setOnAction(e -> {
+          
+           if (comboRoomServiceItem.getValue() == "Pizza $10")
+           {
+               RoomService newRoomService = new RoomService("Pizza",10);
+           }
+           else if(comboRoomServiceItem.getValue() == "Pasta $8")
+           {
+               RoomService newRoomService = new RoomService("Pasta",8);
+           }
+           else 
+           {
+               RoomService newRoomService = new RoomService("Bread Sticks",4);
+           }
+             
+           for (int i = 0; i < RoomService.service.size(); i++)
+           {
+              
+               txtItemsAdded.clear(); 
+               txtItemsAdded.appendText("Item Added: " + RoomService.service.get(i).description +
+                       " Subtotal: $" + Double.toString(RoomService.service.get(i).calculateRoomServiceTotal()) +"\n");
+           }
+                  
+        });
                  
          
         primaryStage.show();
