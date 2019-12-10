@@ -24,13 +24,13 @@ public class UpdatedGroupProjectGUI extends Application {
     Statement commStmt;
     ResultSet dbResults;
     
-   Employee Jacob = new Employee("jake","Hi1","jacob");
-   Guest Susan = new Guest ("Susan1","Hi1","suzy");
-   Guest Jay = new Guest ("Jason","Hi1","Jay");
+   //Employee Jacob = new Employee("jake","Hi1","jacob");
+   //Guest Susan = new Guest ("Susan1","Hi1","suzy");
+   //Guest Jay = new Guest ("Jason","Hi1","Jay");
    
-   Room one = new Room(3, 2, 1, 1, 1);
-   Room two = new Room(2, 1, 2, 2, 2);
-   Room three = new Room(1, 1, 2, 1, 3);
+   //Room one = new Room(3, 2, 1, 1, 1);
+   //Room two = new Room(2, 1, 2, 2, 2);
+   //Room three = new Room(1, 1, 2, 1, 3);
    
    Booking first = new Booking(Susan, one, 2019, 5, 10);
    Booking second = new Booking(Jay, two, 2019, 8, 16);
@@ -51,6 +51,15 @@ Alert a = new Alert(AlertType.ERROR);
         TextField txtFirst = new TextField();
         TextField txtSecond = new TextField();
         
+    // create new acc
+        Label lblempName = new Label("Enter Your Name");
+        Label lblEmpUser = new Label("Enter Username");
+        Label lblEmpPass = new Label("Enter Password");
+        TextField txtEmpName = new TextField();
+        TextField txtEmpUser = new TextField();
+        TextField txtEmpPass = new TextField();
+        Button btnCreate = new Button("create the account");
+    
         // Controls for the Employee menu below 1-7
         // Controls for tab 1
         final ToggleGroup group = new ToggleGroup();
@@ -283,6 +292,7 @@ Alert a = new Alert(AlertType.ERROR);
         GridPane empEditEmp = new GridPane();
         GridPane roomOp = new GridPane();
         GridPane empLogOut1 = new GridPane();
+        GridPane createNew = new GridPane();
        
         //tab 4 pane
         GridPane empEditGuestPane = new GridPane();
@@ -317,6 +327,7 @@ Alert a = new Alert(AlertType.ERROR);
         //Scenes
         
         Scene primaryScene = new Scene(whole,500,300);
+        Scene createAccScene = new Scene(createNew, 500,500);
         Scene empLoginScene = new Scene(empLogin,700,400);
         Scene createEmpScene = new Scene(createEmpAcc,900,600);
         Scene empMenuChoiceScene = new Scene(root,1100,700);
@@ -337,7 +348,6 @@ Alert a = new Alert(AlertType.ERROR);
     
     
     
-    String tableE = "EMPLOYEE";
     
     
     
@@ -346,8 +356,8 @@ Alert a = new Alert(AlertType.ERROR);
     public void start(Stage primaryStage) throws Exception {
         
         //loadDataFromDB();
-     //   showEmployee();
-     //   showGuest();
+     //   showAllEmployee();
+     //   showAllGuest();
         whole.getChildren().add(primaryPane);
         
         //Login page
@@ -367,6 +377,16 @@ Alert a = new Alert(AlertType.ERROR);
         
         empLogin.setVgap(12);
         empLogin.setHgap(20);
+        
+          // create account scene
+        createNew.setAlignment(Pos.CENTER);
+        createNew.add(lblempName, 0, 0);
+        createNew.add(lblEmpUser,0,1);
+        createNew.add(lblEmpPass,0,2);
+        createNew.add(txtEmpNames,1,0);
+        createNew.add(txtEmpUsers,1,1);
+        createNew.add(txtEmpPasss,1,2);
+        createNew.add(btnCreate,1,5);
 
         String name = txtFirst.toString();
         String password = txtSecond.toString();
@@ -711,6 +731,17 @@ Alert a = new Alert(AlertType.ERROR);
                     }
                 }
             
+        });
+        
+           btnCreateAccount.setOnAction(e -> {
+           primaryStage.setScene(createAccScene); 
+        });
+        
+        btnCreate.setOnAction(e -> {
+           if (txtEmpUsers.getText() != null && txtEmpNames.getText() != null && txtEmpPasss.getText() != null){
+               Employee newEmps = new Employee(txtEmpUsers.getText(), txtEmpPasss.getText(), txtEmpNames.getText());
+               primaryStage.setScene(empMenuChoiceScene);
+           }
         });
      //!!!!! Employee Tab 1 Functionality   
        rb2.setOnAction(e -> {
@@ -1178,7 +1209,7 @@ Alert a = new Alert(AlertType.ERROR);
 //
 //        }
 //    }
-//    public void showEmployee()
+//    public void showAllEmployee()
 //    {
 //        String sqlQuery = "SELECT * FROM EMPLOYEE";
 //        sendDBCommand(sqlQuery);
@@ -1205,7 +1236,7 @@ Alert a = new Alert(AlertType.ERROR);
 //        
 //    }
 //    
-//    public void showGuest(){
+//    public void showAllGuest(){
 //        String sqlQuery = "SELECT * FROM GUEST";
 //        sendDBCommand(sqlQuery);
 //        String gName = "";
